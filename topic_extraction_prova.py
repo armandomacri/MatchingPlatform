@@ -1,17 +1,15 @@
 import os
 import tensorflow as tf
-from tensorflow import keras
-import tensorflow_datasets as tfds
+
+
 import numpy as np
-from matplotlib import pyplot as plt
 import os
-from tensorflow.keras import layers
-from keras import models
+
 from tensorflow.keras.layers.experimental.preprocessing import TextVectorization
 # try to load the model
 from tensorflow.keras.models import load_model
 import pickle
-import en_core_web_md
+
 
 
 def topic(index):
@@ -82,7 +80,7 @@ if __name__ == "__main__":
     
     """
  
-    from_disk = pickle.load(open("vectorizer.pkl", "rb"))
+    from_disk = pickle.load(open("word_embedding_model/vectorizer.pkl", "rb"))
     vectorizer = TextVectorization(max_tokens=from_disk['config']['max_tokens'],
                                        output_mode='int',
                                        output_sequence_length=from_disk['config']['output_sequence_length'])
@@ -94,7 +92,6 @@ if __name__ == "__main__":
     if not os.path.exists(dir_name):
       os.makedirs(dir_name)
 
-    nlp = en_core_web_md.load()
     network = load_model(os.path.join(dir_name, 'model.h5'))
 
     Xnew = []
@@ -103,7 +100,7 @@ if __name__ == "__main__":
     Xnew.append("my smartphone isn't very smart question answer")
     Xnew.append("according to you who seems to be dumb the phone on the speaker why")
     prova = vectorizer(np.array([[s] for s in Xnew])).numpy()
-    print(prova.shape)
+    print(prova[0])
     ynew = network.predict(prova)
 
     print(ynew)
