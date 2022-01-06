@@ -13,8 +13,7 @@ class Transcriber:
                 # listen for the data (load audio to memory)
                 audio_data = self.r.record(source)
                 # recognize (convert from speech to text)
-                text = self.r.recognize_google(audio_data, language="it-IT")
-                print(text)
+                text = self.r.recognize_google(audio_data, language="en-EN")
                 return text
             except:
                 print("Error ! \t" + filename.split('/')[3])
