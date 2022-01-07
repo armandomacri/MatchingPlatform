@@ -4,12 +4,16 @@ from PIL import Image, ImageTk
 from mongo_connection import MongoConnection
 import time
 from transcriber import Transcriber
+from audio_retrieval import AudioRetriever
+from topic_extractor import TopicExtractor
 from tkinter import scrolledtext
 
 # ********** Initializations **********
 database = MongoConnection()
 database.initialize()
 transcriber = Transcriber()
+retriever = AudioRetriever()
+extractor = TopicExtractor()
 # *************************************
 
 root = tk.Tk()
@@ -54,6 +58,7 @@ tk.Button(searchframe,
               compound='left',
               fg=fg_button,
               bg=bg_button,
+              command=lambda:listen(),
               activebackground='#fffffe',
               font=button_font
               ).pack(side=tk.TOP,padx=15, pady=15, fill="both", expand='yes')
@@ -94,12 +99,26 @@ def open_file():
     if file_path is not None:
         pass
     sentence=transcriber.transcriptWav(file_path)
+    topic = extractor.get_topic(sentence)
     textw = scrolledtext.ScrolledText(root, width=70, height=30)
     textw.pack()
     #textw.grid(column=1, row=2, sticky=tk.N + tk.S + tk.E + tk.W)
     textw.config(background=bg_color, foreground=fg_text,
                  font='times 12 bold', wrap='word')
-    textw.insert(tk.END, sentence)
+    textw.insert(tk.END, sentence + topic)
+
+def listen():
+    audio = retriever.retrieve()
+    sentence = transcriber.transcriptWav("file.wav")
+    topic = extractor.get_topic(sentence)
+    textw = scrolledtext.ScrolledText(root, width=70, height=30)
+    textw.pack()
+    # textw.grid(column=1, row=2, sticky=tk.N + tk.S + tk.E + tk.W)
+    textw.config(background=bg_color, foreground=fg_text,
+                 font='times 12 bold', wrap='word')
+    textw.insert(tk.END, sentence + topic)
+
+
 
 def uploadFile():
     pb1 = tk.Progressbar(
