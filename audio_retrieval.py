@@ -1,3 +1,4 @@
+'''
 import pyaudio
 import wave
 
@@ -43,3 +44,4 @@ class AudioRetriever:
         waveFile.setframerate(self.RATE)
         waveFile.writeframes(b''.join(frames))
         waveFile.close()
+'''
