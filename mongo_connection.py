@@ -47,8 +47,13 @@ class MongoConnection(object):
             {'$limit': 5}
         ]
 
+        users = []
         results = MongoConnection.DATABASE['Users'].aggregate(pipeline)
-        return results
+        if results is not None:
+            for i in results:
+                users.append(User(i['fname'], i['lname'], i['username'], i['topics']))
+
+        return users
 
     @staticmethod
     def update_topic_score(username, topic, score):
