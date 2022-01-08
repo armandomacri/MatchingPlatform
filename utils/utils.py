@@ -5,7 +5,7 @@ class User:
         self.fname = fname
         self.lname = lname
         self.username = username
-        self.sport = (topics[0]['sport'], topics[0]['counter'])
-        self.world = (topics[1]['world'], topics[1]['counter'])
-        self.business = (topics[2]['business'], topics[2]['counter'])
-        self.science = (topics[3]['science/tech'], topics[1]['counter'])
+        self.sport = (topics['sport'][0], topics['sport'][1])
+        self.world = (topics['world'][0], topics['world'][1])
+        self.business = (topics['business'][0], topics['business'][1])
+        self.science = (topics['science/tech'][0], topics['science/tech'][1])

@@ -71,9 +71,7 @@ if __name__ == '__main__':
 
     #print(database.update_topic_score('armandomacri', 'business', 0.3452343))
 
-    p = database.get_similar_score_users('armandomacri', 'business', 0.3452343)
-    for doc in p:
-        print(doc)
+    print(database.get_similar_score_users('armandomacri', 'business', 0.9234763))
 
 
     #print(database.get_user('armandomacri'))
