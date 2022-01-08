@@ -13,7 +13,6 @@ database = MongoConnection()
 database.initialize()
 transcriber = Transcriber()
 #retriever = AudioRetriever()
-extractor = TopicExtractor()
 # *************************************
 
 root = tk.Tk()
@@ -100,23 +99,31 @@ def open_file():
     if file_path is not None:
         pass
     sentence=transcriber.transcriptWav(file_path)
-    topic = extractor.get_topic(sentence)
+    extractor = TopicExtractor()
+    topic, score = extractor.get_topic(sentence)
+    username, newscore = user.updateScore(topic, score)
+    database.update_topic_score(username, topic, newscore)
+    matches = database.get_similar_score_users(username, topic, newscore)
     textw.delete("1.0", tk.END)
     textw.pack()
     textw.config(background=bg_color, foreground=fg_text,
                  font='times 12 bold', wrap='word')
-    textw.insert(tk.END, sentence + topic)
+    textw.insert(tk.END, sentence + topic + matches[0].username)
 
 def listen():
     #audio = retriever.retrieve()
     sentence = transcriber.transcriptWav("file.wav")
-    topic = extractor.get_topic(sentence)
+    extractor = TopicExtractor()
+    topic, score = extractor.get_topic(sentence)
+    username, newscore = user.updateScore(topic, score)
+    database.update_topic_score(username, topic, newscore)
+    matches = database.get_similar_score_users(username, topic, newscore)
     textw.delete("1.0", tk.END)
     textw.pack()
     # textw.grid(column=1, row=2, sticky=tk.N + tk.S + tk.E + tk.W)
     textw.config(background=bg_color, foreground=fg_text,
                  font='times 12 bold', wrap='word')
-    textw.insert(tk.END, sentence + topic)
+    textw.insert(tk.END, sentence + topic + matches[0].username)
 
 
 
@@ -140,6 +147,7 @@ def search_speaker_phane():
     pass
 
 def makeOnline():
+    global user
     if usernameText.get() == "":
         print("Errore")
     else:

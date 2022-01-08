@@ -5,7 +5,7 @@ from tensorflow.keras.models import load_model
 import tensorflow as tf
 import pickle
 
-topics = ["World", "Sport", "Business", "Science/Tech"]
+topics = ["world", "sport", "business", "science/tech"]
 
 class TopicExtractor:
     dir_name = "word_embedding_model"
@@ -27,4 +27,4 @@ class TopicExtractor:
     def get_topic(self, str):
         v = self.vectorizer(np.array([str])).numpy()
         p = self.network.predict(v)
-        return topics[np.argmax(p)]
+        return topics[np.argmax(p)], max(p)
