@@ -12,6 +12,7 @@ class User:
         self.alfa = 0.4
 
     def updateScore(self, topic, score):
+
         if topic == "sport":
             self.sport[0] = ((self.alfa * self.sport[0]) + ((1 - self.alfa) * score))
             return self.username, self.sport[0]
@@ -19,7 +20,7 @@ class User:
             self.world[0] = ((self.alfa * self.world[0]) + ((1 - self.alfa) * score))
             return self.username, self.world[0]
         if topic == "business":
-            self.business[0] = ((self.alfa * self.business[0]) + ((1 - self.alfa) * score))
+            self.business[0] = self.alfa * self.business[0] + (1 - self.alfa) * score
             return self.username, self.business[0]
         if topic == "science/tech":
             self.science[0] = ((self.alfa * self.science[0]) + ((1 - self.alfa) * score))

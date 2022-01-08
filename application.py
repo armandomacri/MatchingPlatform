@@ -156,7 +156,6 @@ def makeOnline():
             print('user doesnt exists')
         else:
             usernameText["state"] = "disabled"
-            print(user['fname']) # select a field
     search_speaker_phane()
 
 # Enter button

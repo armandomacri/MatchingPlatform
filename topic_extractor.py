@@ -27,4 +27,4 @@ class TopicExtractor:
     def get_topic(self, str):
         v = self.vectorizer(np.array([str])).numpy()
         p = self.network.predict(v)
-        return topics[np.argmax(p)], max(p)
+        return topics[np.argmax(p)], max(p[0])
