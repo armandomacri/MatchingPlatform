@@ -56,7 +56,15 @@ topicframe1 = tk.Frame(informationframe, bg=bg_color)
 topicframe2 = tk.Frame(informationframe, bg=bg_color)
 
 resultframe= tk.Frame(root, bg=bg_color)
-matchframe = tk.Frame(root, bg=bg_color)
+
+resultscore = tk.StringVar()
+tk.Label(resultframe,
+             textvariable=resultscore,
+             bg=bg_color,
+             fg=fg_text,
+             font=button_font).pack(side=tk.RIGHT, padx=5, pady=5)
+
+matchframe = tk.LabelFrame(root, text='Best matches', fg=fg_text,bg=bg_color)
 # ***********************************************************************
 
 
@@ -122,11 +130,7 @@ def show_result(text, topic, score):
     textw.insert(tk.END, text)
     textw.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx=25)
 
-    tk.Label(resultframe,
-             text='Topic:\n'+topic+': '+str(round(score, 4)),
-             bg=bg_color,
-             fg=fg_text,
-             font=button_font).pack(side=tk.LEFT, padx=5, pady=5)
+    resultscore.set('Topic:\n'+topic+': '+str(round(score, 4)))
 
     if topic == 'sport':
         sporttext.set('Sport: '+str(round(user.sport[0],4)))
@@ -140,6 +144,9 @@ def show_result(text, topic, score):
     resultframe.pack(side='top', pady=10)
 
 def suggest_users(users):
+    for widget in matchframe.winfo_children():
+        widget.destroy()
+
     for u in users:
         tk.Label(matchframe,
                  text=u.username,
@@ -214,7 +221,6 @@ def makeOnline():
                     font = button_font).pack(side='top', padx=5, pady=5)
 
             tk.Label(topicframe1,
-
                      textvariable=sporttext,
                      bg=bg_color,
                      fg=fg_text,
@@ -253,11 +259,5 @@ enter = tk.Button(usernameframe,
                   font=button_font,
                   cursor="hand1")
 enter.pack(side=tk.LEFT)
-
-
-# Disconnect button
-button = tk.Button(closebutton, text='Disconnect', width=25, command=root.destroy, bg='#67568c')
-button.pack(side=tk.BOTTOM)
-
 
 root.mainloop()
