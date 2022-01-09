@@ -3,7 +3,7 @@ from tkinter import filedialog
 from PIL import Image, ImageTk
 from mongo_connection import MongoConnection
 from transcriber import Transcriber
-#from audio_retrieval import AudioRetriever
+from audio_retrieval import AudioRetriever
 from topic_extractor import TopicExtractor
 from tkinter import scrolledtext
 
@@ -11,7 +11,7 @@ from tkinter import scrolledtext
 database = MongoConnection()
 database.initialize()
 transcriber = Transcriber()
-#retriever = AudioRetriever()
+retriever = AudioRetriever()
 # *************************************
 
 root = tk.Tk()
@@ -139,7 +139,7 @@ def show_result(text, topic, score):
     elif topic == 'world':
         worldtext.set('World: ' + str(round(user.sport[0], 4)))
     elif topic == 'science':
-        sciencetext.set('Science: ' + str(round(user.sport[0], 4)))
+        sciencetext.set('Sci/Tech: ' + str(round(user.sport[0], 4)))
 
     resultframe.pack(side='top', pady=10)
 
@@ -162,15 +162,16 @@ def open_file():
         pass
     sentence=transcriber.transcriptWav(file_path)
     extractor = TopicExtractor()
-    topic, tipicscore = extractor.get_topic(sentence)
-    username, newscore = user.updateScore(topic, tipicscore)
+    topic, topicscore = extractor.get_topic(sentence)
+    username, newscore = user.updateScore(topic, topicscore)
     database.update_topic_score(username, topic, newscore)
 
-    show_result(sentence, topic, tipicscore)
+    show_result(sentence, topic, topicscore)
     suggest_users(database.get_similar_score_users(username, topic, newscore))
 
 def listen():
-    #audio = retriever.retrieve()
+    retriever = AudioRetriever()
+    audio = retriever.retrieve()
     sentence = transcriber.transcriptWav("file.wav")
     extractor = TopicExtractor()
     topic, tipicscore = extractor.get_topic(sentence)
@@ -243,7 +244,7 @@ def makeOnline():
                      bg=bg_color,
                      fg=fg_text,
                      font=button_font).pack(side=tk.LEFT, padx=5, pady=5)
-            sciencetext.set('Science/tech: ' + str(round(user.science[0], 4)))
+            sciencetext.set('Sci/tech: ' + str(round(user.science[0], 4)))
             topicframe1.pack(side='bottom')
             topicframe2.pack(side='bottom')
 
