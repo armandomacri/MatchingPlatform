@@ -3,7 +3,7 @@ from tkinter import filedialog
 from PIL import Image, ImageTk
 from mongo_connection import MongoConnection
 from transcriber import Transcriber
-from audio_retrieval import AudioRetriever
+#from audio_retrieval import AudioRetriever
 from topic_extractor import TopicExtractor
 from tkinter import scrolledtext
 
@@ -11,9 +11,11 @@ from tkinter import scrolledtext
 database = MongoConnection()
 database.initialize()
 transcriber = Transcriber()
-retriever = AudioRetriever()
+retriever = []
 # *************************************
 
+
+# *********** root frame configuration ****************
 root = tk.Tk()
 
 win_width = 700
@@ -22,7 +24,8 @@ bg_color = '#FFFFFF'
 bg_button = '#ff6e6c'
 fg_button = '#1f1235'
 fg_text = '#1f1235'
-button_font = font=("Arial", 15)
+button_font = font =("Arial", 15)
+# ******************************************************
 
 screen_width = root.winfo_screenwidth()
 screen_height = root.winfo_screenheight()
@@ -35,8 +38,8 @@ root.configure(background=bg_color)
 root.title('Matching Platform')
 
 # ****************************** APP frame ******************************
-usernameframe = tk.LabelFrame(root, text="Insert your information!", padx=10, pady=10, fg=fg_text ,bg=bg_color)
-usernameframe.pack(side=tk.TOP, pady=10)
+usernameframe = tk.Frame(root, pady=20, padx=20, bg='#50e3c2')
+usernameframe.pack(side=tk.TOP, anchor=tk.N, fill=tk.X, expand=True)
 
 # frame hidden, used for listening to
 mainframe = tk.Frame(root, bg=bg_color)
@@ -49,8 +52,8 @@ informationframe = tk.LabelFrame(mainframe,
                             text="Welcome",
                             bg=bg_color,
                             fg=fg_text)
-searchframe.pack(side=tk.RIGHT, padx=30)
-informationframe.pack(side=tk.LEFT, padx=30)
+searchframe.pack(side=tk.RIGHT, padx=30, anchor=tk.N)
+informationframe.pack(side=tk.LEFT, padx=30, anchor=tk.N)
 
 topicframe1 = tk.Frame(informationframe, bg=bg_color)
 topicframe2 = tk.Frame(informationframe, bg=bg_color)
@@ -69,48 +72,54 @@ matchframe = tk.LabelFrame(root, text='Best matches', fg=fg_text,bg=bg_color)
 
 
 # ********************* Insert Username *********************
-
-closebutton = tk.Frame(root, padx=10, bg=bg_color)
-closebutton.pack(side=tk.BOTTOM, pady=10)
-
+containerusername = tk.Frame(usernameframe, bg='#50e3c2')
+containerusername.pack(side=tk.TOP)
 #Username label
-tk.Label(usernameframe,
+tk.Label(containerusername,
                     text="Insert your username:",
-                    bg=bg_color,
-                    fg=fg_text,
+                    bg='#50e3c2',
+                    fg='#2a3544',
                     font=button_font).pack(side=tk.LEFT)
 
 #Username Text field
-usernameText = tk.Entry(usernameframe, width=30)
-usernameText.pack(side=tk.LEFT, padx=10)
+usernameText = tk.Entry(containerusername, font=font)
+usernameText.pack(side=tk.LEFT, padx=20)
 #***************************************************************
 
 # *****************************************************************************
-img1 = ImageTk.PhotoImage(Image.open('./img/sound-waves.png').resize((60, 30), Image.ANTIALIAS))
-img2 = ImageTk.PhotoImage(Image.open('./img/upload.png').resize((30, 30), Image.ANTIALIAS))
+img1 = ImageTk.PhotoImage(Image.open('./img/microphone.png').resize((40, 40), Image.ANTIALIAS))
+img2 = ImageTk.PhotoImage(Image.open('./img/upload.png').resize((40, 40), Image.ANTIALIAS))
 
-tk.Button(searchframe,
-              text='Talk',
+containerbutton = tk.Frame(searchframe, bg=bg_color)
+containerbutton.pack(side=tk.TOP,pady=9)
+
+tk.Button(containerbutton,
               image=img1,
-              compound='left',
               fg=fg_button,
               bg=bg_button,
               command=lambda:listen(),
               activebackground='#fffffe',
               font=button_font
-              ).pack(side=tk.TOP,padx=15, pady=10, fill="both", expand='yes')
+              ).pack(side=tk.LEFT, padx=15, pady=10)
 
-tk.Button(searchframe,
-                    text='Choose File',
+tk.Button(containerbutton,
                     bg=bg_button,
                     fg=fg_button,
-                    compound='left',
                     image=img2,
                     command=lambda:open_file(),
                     activebackground='#fffffe',
                     font=button_font
-            ).pack(side='top', padx=15, pady=10, expand='yes', fill='both')
+            ).pack(side=tk.RIGHT, padx=15, pady=10)
 
+checkVav = tk.IntVar()
+check = tk.Checkbutton(searchframe,
+                       text='Translate',
+                       variable=checkVav,
+                       onvalue=1,
+                       offvalue=0,
+                       activebackground=bg_color,
+                       bg=bg_color,
+                       font=font).pack(side=tk.TOP)
 # *****************************************************************************
 
 sporttext = tk.StringVar()
@@ -160,19 +169,28 @@ def open_file():
     file_path = filedialog.askopenfilename(title='Open your file audio', initialdir='/', filetypes=[('audio files', '*.wav')])
     if file_path is not None:
         pass
-    sentence=transcriber.transcriptWav(file_path)
-    extractor = TopicExtractor()
-    topic, topicscore = extractor.get_topic(sentence)
-    username, newscore = user.updateScore(topic, topicscore)
-    database.update_topic_score(username, topic, newscore)
 
-    show_result(sentence, topic, topicscore)
-    suggest_users(database.get_similar_score_users(username, topic, newscore))
+    extract_topic(file_path)
+
 
 def listen():
+    '''
     retriever = AudioRetriever()
     audio = retriever.retrieve()
-    sentence = transcriber.transcriptWav("file.wav")
+    extract_topic()
+    # sentence = transcriber.transcriptWav("file.wav")
+    extract_topic(sentence)
+    '''
+
+
+def extract_topic(file_path="file.wav"):
+
+    sentence = []
+    if checkVav.get() == 1:
+        sentence = transcriber.transcriptWav(file_path, True)
+    else:
+        sentence = transcriber.transcriptWav(file_path)
+
     extractor = TopicExtractor()
     topic, tipicscore = extractor.get_topic(sentence)
     username, newscore = user.updateScore(topic, tipicscore)
@@ -181,25 +199,9 @@ def listen():
     suggest_users(database.get_similar_score_users(username, topic, newscore))
 
 
-''''
-def uploadFile():
-    pb1 = tk.Progressbar(
-                        usernameframe,
-                        orient=tk.HORIZONTAL,
-                        length=300,
-                        mode='determinate'
-                        )
-    pb1.grid(row=4, columnspan=3, pady=20)
-    for i in range(5):
-        usernameframe.update_idletasks()
-        pb1['value'] += 20
-        time.sleep(1)
-    pb1.destroy()
-    tk.Label(usernameframe, text='File Uploaded Successfully!', fg= fg_text).grid(row=4, columnspan=3, pady=10)
-'''
 
 def search_speaker_phane():
-    mainframe.pack(side='top', padx=25, pady=10)
+    mainframe.pack(side=tk.TOP, anchor=tk.N, fill=tk.X, expand=True)
 
 
 def makeOnline():
@@ -250,13 +252,13 @@ def makeOnline():
 
             search_speaker_phane()
 
+
 # Enter button
-enter = tk.Button(usernameframe,
+enter = tk.Button(containerusername,
                   text='ENTER',
-                  width=20,
                   command=makeOnline,
-                  fg=fg_button,
-                  bg=bg_button,
+                  fg='#344457',
+                  bg="#8c88ff",
                   font=button_font,
                   cursor="hand1")
 enter.pack(side=tk.LEFT)
