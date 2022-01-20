@@ -179,7 +179,7 @@ def listen():
     audio = retriever.retrieve()
     extract_topic()
     # sentence = transcriber.transcriptWav("file.wav")
-    extract_topic(sentence)
+    extract_topic()
     '''
 
 
