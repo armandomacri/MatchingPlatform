@@ -24,7 +24,7 @@ bg_color = '#FFFFFF'
 bg_button = '#ff6e6c'
 fg_button = '#1f1235'
 fg_text = '#1f1235'
-button_font = font =("Arial", 15)
+button_font = font =("Calibri", 13)
 # ******************************************************
 
 screen_width = root.winfo_screenwidth()
@@ -39,12 +39,12 @@ root.title('Matching Platform')
 
 # ****************************** APP frame ******************************
 usernameframe = tk.Frame(root, pady=20, padx=20, bg='#50e3c2')
-usernameframe.pack(side=tk.TOP, anchor=tk.N, fill=tk.X, expand=True)
+usernameframe.pack(side=tk.TOP, fill=tk.X)
 
 # frame hidden, used for listening to
 mainframe = tk.Frame(root, bg=bg_color)
 searchframe = tk.LabelFrame(mainframe,
-                            text="I'm listening to you",
+                            text="I'm waiting for you",
                             bg=bg_color,
                             fg=fg_text)
 
@@ -64,16 +64,22 @@ resultscore = tk.StringVar()
 tk.Label(resultframe,
              textvariable=resultscore,
              bg=bg_color,
-             fg=fg_text,
-             font=button_font).pack(side=tk.RIGHT, padx=5, pady=5)
+             fg='#50e3c2',
+             font=("Calibri", 18)).pack(side=tk.RIGHT, padx=5, pady=5)
 
-matchframe = tk.LabelFrame(root, text='Best matches', fg=fg_text,bg=bg_color)
+matchframe = tk.LabelFrame(root, text='Best matches', fg=fg_text, bg=bg_color)
 # ***********************************************************************
 
+logo = ImageTk.PhotoImage(Image.open('./img/interests.png').resize((200, 200), Image.ANTIALIAS))
+tk.Label(root,
+        image=logo,
+        bg='white',
+        ).pack(anchor=tk.CENTER, pady=100)
 
 # ********************* Insert Username *********************
 containerusername = tk.Frame(usernameframe, bg='#50e3c2')
 containerusername.pack(side=tk.TOP)
+
 #Username label
 tk.Label(containerusername,
                     text="Insert your username:",
@@ -137,7 +143,7 @@ def show_result(text, topic, score):
     textw.config(background=bg_color, foreground=fg_text,
                  font='times 12 bold', wrap='word')
     textw.insert(tk.END, text)
-    textw.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx=25)
+    textw.pack(side=tk.LEFT)
 
     resultscore.set('Topic:\n'+topic+': '+str(round(score, 4)))
 
@@ -150,20 +156,25 @@ def show_result(text, topic, score):
     elif topic == 'science':
         sciencetext.set('Sci/Tech: ' + str(round(user.sport[0], 4)))
 
-    resultframe.pack(side='top', pady=10)
+    resultframe.pack(side='top',fill=tk.X, anchor=tk.N, pady=10, padx=30)
 
 def suggest_users(users):
+
+    # The variable photo is a local variable which gets garbage collected after the class is instantiated.
+    global i
     for widget in matchframe.winfo_children():
         widget.destroy()
-
+    i = ImageTk.PhotoImage(Image.open('./img/user.png').resize((20, 20), Image.ANTIALIAS))
     for u in users:
         tk.Label(matchframe,
+                 image=i,
                  text=u.username,
+                 compound='left',
                  bg=bg_color,
-                 fg=fg_text,
-                 font=('Arial', 10)).pack(side=tk.LEFT, padx=10)
+                 fg=fg_button
+                 ).pack(side=tk.LEFT, padx=10, pady=15)
 
-    matchframe.pack(side='top', padx=25)
+    matchframe.pack(anchor=tk.S, padx=25, pady=10)
 
 def open_file():
     file_path = filedialog.askopenfilename(title='Open your file audio', initialdir='/', filetypes=[('audio files', '*.wav')])
@@ -201,7 +212,7 @@ def extract_topic(file_path="file.wav"):
 
 
 def search_speaker_phane():
-    mainframe.pack(side=tk.TOP, anchor=tk.N, fill=tk.X, expand=True)
+    mainframe.pack(side=tk.TOP, fill=tk.X, pady=15)
 
 
 def makeOnline():
@@ -211,8 +222,15 @@ def makeOnline():
     else:
         user = database.get_user(usernameText.get())
         if user is None:
-            print('user doesnt exists')
+            print('user doesn\'t exists')
         else:
+            # *************** remove logo ********************
+            i = 0
+            for widget in root.winfo_children():
+                if i != 0:
+                    widget.pack_forget()
+                i += 1
+            # *************************************************
             enter["state"] = "disabled"
             userimg = ImageTk.PhotoImage(Image.open('./img/user.png').resize((15, 15), Image.ANTIALIAS))
             tk.Label(informationframe,
