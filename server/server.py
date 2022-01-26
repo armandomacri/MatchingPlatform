@@ -10,7 +10,7 @@ from xmlrpc.server import SimpleXMLRPCRequestHandler
 class RequestHandler(socketserver.ThreadingMixIn, SimpleXMLRPCRequestHandler):
     rpc_paths = ('/RPC2',)
 
-with SimpleXMLRPCServer(('0.0.0.0', 9000), requestHandler=RequestHandler) as server:
+with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as server:
     print("Listening on port 9000")
     server.register_introspection_functions()
     server.register_multicall_functions()

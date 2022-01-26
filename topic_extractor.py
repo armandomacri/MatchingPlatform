@@ -60,7 +60,7 @@ class TopicExtractor:
         try:
             t = TimeoutTransport()
             t.set_timeout(40.0)
-            s = xmlrpc.client.ServerProxy('http://0.0.0.0:9000', transport=t)
+            s = xmlrpc.client.ServerProxy('http://localhost:9000', transport=t)
             # s = xmlrpc.client.ServerProxy('http://LAPTOP-E04M55SK:9000', transport=t)
             arrival_time = time.time()
             topic, score = s.get_topic(str)
@@ -69,6 +69,11 @@ class TopicExtractor:
             print(end_time - arrival_time)
             print(topic)
             print(score)
+        except xmlrpc.client.Fault as timeout_expired:
+            #print(type(timeout_epired))  # the exception instance
+            print(timeout_expired)
+            print("Timeout expired!")
+            topic, score = self.get_topic_local(str)
         except:
             print("Remote server not reachable")
             topic, score = self.get_topic_local(str)
