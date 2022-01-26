@@ -24,10 +24,11 @@ def topic(index):
 
 if __name__ == "__main__":
 
+    '''
     MAX_WORDS = 10000
     MAX_LENGTH = 100
 
-    """
+
     train_data, train_label = tfds.as_numpy(tfds.load(
         'ag_news_subset',
         split='train',
@@ -78,9 +79,9 @@ if __name__ == "__main__":
                  'weights': vectorizer.get_weights()}
                 , open("vectorizer.pkl", "wb")) 
     
-    """
+    '''
  
-    from_disk = pickle.load(open("word_embedding_model/vectorizer.pkl", "rb"))
+    from_disk = pickle.load(open("word_embedding_model/vectorizer2.pkl", "rb"))
     vectorizer = TextVectorization(max_tokens=from_disk['config']['max_tokens'],
                                        output_mode='int',
                                        output_sequence_length=from_disk['config']['output_sequence_length'])
@@ -92,7 +93,7 @@ if __name__ == "__main__":
     if not os.path.exists(dir_name):
       os.makedirs(dir_name)
 
-    network = load_model(os.path.join(dir_name, 'model.h5'))
+    network = load_model(os.path.join(dir_name, 'model_fine_tuning.h5'))
 
     Xnew = []
     Xnew.append("Chelsea is a great team")

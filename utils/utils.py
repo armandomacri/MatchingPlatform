@@ -15,13 +15,17 @@ class User:
 
         if topic == "sport":
             self.sport[0] = ((self.alfa * self.sport[0]) + ((1 - self.alfa) * score))
-            return self.username, self.sport[0]
+            self.sport[1] = self.sport[1] + 1
+            return self.username, self.sport[0], self.sport[1]
         if topic == "world":
             self.world[0] = ((self.alfa * self.world[0]) + ((1 - self.alfa) * score))
-            return self.username, self.world[0]
+            self.world[1] = self.world[1] + 1
+            return self.username, self.world[0], self.world[1]
         if topic == "business":
             self.business[0] = self.alfa * self.business[0] + (1 - self.alfa) * score
-            return self.username, self.business[0]
+            self.business[1] = self.business[1] + 1
+            return self.username, self.business[0], self.business[1]
         if topic == "science/tech":
             self.science[0] = ((self.alfa * self.science[0]) + ((1 - self.alfa) * score))
-            return self.username, self.science[0]
+            self.science[1] = self.science[1] + 1
+            return self.username, self.science[0], self.science[1]

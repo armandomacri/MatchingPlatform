@@ -33,13 +33,15 @@ class MongoConnection(object):
 
 
     @staticmethod
-    def get_similar_score_users(username, topic, score):
+    def get_similar_score_users(username, topic, score, times):
         pipeline = [
             {"$match":
                  {"$and": [
                      {"username": {"$nin": [username]}},
                      {"topics."+topic+'.0':{"$gte": score-0.01}},
-                     {"topics."+topic+'.0':{"$lte": score+0.01}}
+                     {"topics."+topic+'.0':{"$lte": score+0.01}},
+                     {"topics." + topic + '.1': {"$gte": times - 10}},
+                     {"topics." + topic + '.1': {"$lte": times + 10}}
                         ]
                 },
             },

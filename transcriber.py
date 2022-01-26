@@ -26,3 +26,19 @@ class Transcriber:
                         return translated
             except:
                 print("Error ! \t" + filename.split('/')[3])
+
+    def listenAndTranscript(self, language=False):
+        with sr.Microphone() as source:
+            self.r.adjust_for_ambient_noise(source, 1)
+            print("Speak:")
+            audio_data = self.r.listen(source)
+            if language == False:
+                text = self.r.recognize_google(audio_data, language="en-EN")
+                print(text)
+                return text
+            else:
+                text = self.r.recognize_google(audio_data, language="it-IT")
+                print(text)
+                translated = GoogleTranslator(source='it', target='en').translate(text)
+                print(translated)
+                return translated

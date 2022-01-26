@@ -148,13 +148,13 @@ def show_result(text, topic, score):
     resultscore.set('Topic:\n'+topic+': '+str(round(score, 4)))
 
     if topic == 'sport':
-        sporttext.set('Sport: '+str(round(user.sport[0],4)))
+        sporttext.set('Sport: '+str(round(user.sport[0], 4)))
     elif topic == 'business':
-        businesstext.set('Business: ' + str(round(user.sport[0], 4)))
+        businesstext.set('Business: ' + str(round(user.business[0], 4)))
     elif topic == 'world':
-        worldtext.set('World: ' + str(round(user.sport[0], 4)))
+        worldtext.set('World: ' + str(round(user.world[0], 4)))
     elif topic == 'science':
-        sciencetext.set('Sci/Tech: ' + str(round(user.sport[0], 4)))
+        sciencetext.set('Sci/Tech: ' + str(round(user.science[0], 4)))
 
     resultframe.pack(side='top',fill=tk.X, anchor=tk.N, pady=10, padx=30)
 
@@ -185,13 +185,13 @@ def open_file():
 
 
 def listen():
-    '''
+
     retriever = AudioRetriever()
     audio = retriever.retrieve()
     extract_topic()
     # sentence = transcriber.transcriptWav("file.wav")
     extract_topic()
-    '''
+
 
 
 def extract_topic(file_path="file.wav"):
@@ -204,10 +204,10 @@ def extract_topic(file_path="file.wav"):
 
     extractor = TopicExtractor()
     topic, tipicscore = extractor.get_topic(sentence)
-    username, newscore = user.updateScore(topic, tipicscore)
+    username, newscore, times = user.updateScore(topic, tipicscore)
     database.update_topic_score(username, topic, newscore)
     show_result(sentence, topic, tipicscore)
-    suggest_users(database.get_similar_score_users(username, topic, newscore))
+    suggest_users(database.get_similar_score_users(username, topic, newscore, times))
 
 
 
